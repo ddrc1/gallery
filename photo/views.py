@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
+from drf_yasg.utils import swagger_auto_schema
 from django.conf import settings
 from .models import Photo
 from .models import Comment
@@ -9,7 +10,8 @@ from account.models import Account
 from django.contrib.auth.models import User
 import json
 
-#Realiza o upload de uma imagem
+@swagger_auto_schema(method='post', operation_description="Realiza o upload de uma imagem",
+    responses={200: 'OK', 401: 'Unauthorized', 404: 'Usuário inexistente'})
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def upload(request):
@@ -27,7 +29,8 @@ def upload(request):
     return HttpResponse('OK')
 
 
-#Lista as imagens autorizadas
+@swagger_auto_schema(method='get', operation_description="Lista as imagens autorizadas",
+    responses={200: 'OK', 401: 'Unauthorized'})
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def list_photos(request):
@@ -35,7 +38,8 @@ def list_photos(request):
     return HttpResponse(photos)
 
 
-#Faz o envio de uma imagem, passando como parâmetro o id dela
+@swagger_auto_schema(method='get', operation_description="Faz o envio de uma imagem, passando como parâmetro o id dela",
+    manual_parameters=[], responses={200: 'OK', 401: 'Unauthorized', 404: 'Foto não autorizada ou inexistente'})
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def send_photo(request, photo_id):
@@ -49,7 +53,8 @@ def send_photo(request, photo_id):
         return HttpResponse('Foto não autorizada ou inexistente', status=404)
 
 
-#Lista todas as imagens
+@swagger_auto_schema(method='get', operation_description="Lista todas as imagens",
+    responses={200: 'OK', 401: 'Unauthorized'})
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def list_all_photos(request):
@@ -58,8 +63,8 @@ def list_all_photos(request):
     return HttpResponse(photos)
 
 
-#Cadastra comentários dos usuários. Precisa passar na requisição, o o username do usuário e o id da foto. 
-# Ex: {"author": "danield", "photo": 1, "comment": "muito legal isso"}
+@swagger_auto_schema(method='post', operation_description="Cadastra comentários dos usuários. Precisa passar na requisição, o o username do usuário e o id da foto.",
+    responses={200: 'OK', 401: 'Unauthorized', 404: 'Foto ou usuário inexistente'})
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def comment(request):
@@ -76,6 +81,8 @@ def comment(request):
     return HttpResponse('OK')
 
 
+@swagger_auto_schema(method='put', operation_description="Adiciona ou remove o like da imagem",
+    responses={200: 'OK', 401: 'Unauthorized', 404: 'Foto ou usuário inexistente'})
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def like(request):
@@ -100,6 +107,8 @@ def like(request):
     return HttpResponse('OK')
 
 
+@swagger_auto_schema(method='put', operation_description="Autoriza uma imagem",
+    responses={200: 'OK', 401: 'Unauthorized', 404: 'Usuário inexistente', 403: "Ação proibida"})
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def photo_authorize(request):
@@ -117,11 +126,13 @@ def photo_authorize(request):
         photo.is_visible = json_data['authorize']
         photo.save()
     else:
-        return HttpResponse("Ação não autorizada!", status=403)
+        return HttpResponse("Ação proibida", status=403)
 
     return HttpResponse('OK')
 
 
+@swagger_auto_schema(method='get', operation_description="Lista todos os comentários",
+    responses={200: 'OK', 401: 'Unauthorized'})
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def list_all_comments(request):
@@ -129,6 +140,8 @@ def list_all_comments(request):
     return HttpResponse(comments)
 
 
+@swagger_auto_schema(method='get', operation_description="Lista todos os comentários de uma foto",
+    responses={200: 'OK', 401: 'Unauthorized'})
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def list_comments_by_photo(request, photo_id):

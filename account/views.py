@@ -3,11 +3,13 @@ from django.contrib.auth.models import User
 from .models import Account
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
+from drf_yasg.utils import swagger_auto_schema
 import pandas as pd
 
-#Carrega um arquivo .ods, .xlsx ou .xlx. Esse arquivo deve conter as colunas username, firstname, lastname, password e authority.
-#Cada linha representa um usuário. O username é um atributo único. 
-# Caso o arquivo seja recarregado ou possua 2 usuarios com o mesmo username, os objeto serão atualizado no banco
+@swagger_auto_schema(method='post', operation_description="Carrega um arquivo .ods, .xlsx ou .xlx. Esse arquivo deve conter as colunas username, firstname, lastname, " + \
+    "password e authority. Caso o arquivo seja recarregado ou possua 2 usuarios com o mesmo username, os objeto serão atualizado no banco. " + \
+    "Caso o arquivo seja recarregado ou possua 2 usuarios com o mesmo username, os objeto serão atualizado no banco",
+    responses={200: 'OK', 401: 'Unauthorized'})
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def user_import(request):
@@ -41,7 +43,8 @@ def user_import(request):
     return HttpResponse("OK")
 
 
-#Retorna a lista de todos os usuários cadastrados no banco
+@swagger_auto_schema(method='get', operation_description="Retorna a lista de todos os usuários cadastrados no banco",
+    responses={200: 'OK', 401: 'Unauthorized'})
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def user_list(request):

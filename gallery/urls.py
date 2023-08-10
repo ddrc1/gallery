@@ -20,6 +20,19 @@ from account import views as account
 from photo import views as photo
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="API Documentation",
+        default_version='v1',
+        description="API documentation for your Argo Tech test",
+    ),
+    public=True,
+    #permission_classes=(permissions.AllowAny,),
+)
+
 urlpatterns = [
     path('admin/', admin.site.urls),
 
@@ -38,4 +51,6 @@ urlpatterns = [
     path('photo/comment/', photo.comment),
     path('photo/comment/list_all/', photo.list_all_comments),
     path('photo/comment/<int:photo_id>', photo.list_comments_by_photo),
+
+    path('swagger/schema', schema_view.with_ui('swagger', cache_timeout=0), name='swagger-schema'),
 ]
