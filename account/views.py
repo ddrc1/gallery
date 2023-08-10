@@ -11,7 +11,6 @@ import pandas as pd
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def user_import(request):
-    #if request.method == 'POST':
     uploaded_file = request.FILES['file']
     df = pd.read_excel(uploaded_file)
     df['password'] = df['password'].astype(str)
@@ -20,14 +19,19 @@ def user_import(request):
     
     for user in df.itertuples():
         existing_user = User.objects.filter(username=user[1])
+        print(existing_user)
         if existing_user.exists():
+
             existing_user = existing_user[0]
             existing_user.first_name = user[3]
             existing_user.last_name = user[4]
             existing_user.save()
             
-            acc = Account.objects.get(user=existing_user)
-            acc.authority = user[5]
+            try:
+                acc = Account.objects.get(user=existing_user)
+                acc.authority = user[5]
+            except:
+                acc = Account(user=existing_user, authority=user[5])
             acc.save()
         else:
             u = User.objects.create_user(username=user[1], password=user[2], first_name=user[3], last_name=user[4])
