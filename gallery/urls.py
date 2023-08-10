@@ -16,13 +16,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from user import views as user
+from account import views as account
 from photo import views as photo
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('user/', user.user_import),
-    path('user/list_all/', user.user_list),
+
+    path('token/', TokenObtainPairView.as_view()),
+    path('token/refresh', TokenRefreshView.as_view()),
+
+    path('user/', account.user_import),
+    path('user/list_all/', account.user_list),
 
     path('photo/', photo.upload),
     path('photo/list/', photo.list_photos),

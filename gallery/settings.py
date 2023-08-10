@@ -38,8 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    'user',
+    'account',
     'photo'
 ]
 
@@ -52,6 +51,12 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
 
 ROOT_URLCONF = 'gallery.urls'
 
@@ -82,7 +87,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'gallery',  # Nome do seu banco de dados PostgreSQL
         'USER': 'postgres',      # Nome de usuário do PostgreSQL
-        'PASSWORD': 'postgres',  # Senha do PostgreSQL
+        'PASSWORD': '12345678',  # Senha do PostgreSQL
         'HOST': 'localhost',   # Host do PostgreSQL (geralmente 'localhost' para desenvolvimento)
         'PORT': '5432',        # Porta do PostgreSQL (padrão é 5432)
     }
