@@ -12,7 +12,10 @@ def upload(request):
         uploaded_photo = request.FILES['file']
 
         author = request.POST['author']
-        user = User.objects.get(username=author)
+        try:
+            user = User.objects.get(username=author)
+        except:
+            return HttpResponse('Usuário inexistente', status=404)
 
         img = Photo(image=uploaded_photo, author=user)
         img.save()
